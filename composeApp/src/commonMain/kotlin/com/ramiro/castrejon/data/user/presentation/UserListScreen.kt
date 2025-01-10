@@ -122,7 +122,7 @@ fun UserCard(
             imageLoadResult = Result.failure(it.result.throwable)
         }
     )
-    Card(modifier = Modifier.fillMaxWidth().clickable{onClick()},
+    Card(modifier = Modifier.fillMaxWidth().padding(16.dp).clickable{onClick()},
         shape = RoundedCornerShape(8.dp)
     ) {
         Row {
