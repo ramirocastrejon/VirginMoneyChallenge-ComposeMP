@@ -11,6 +11,7 @@ import com.ramiro.castrejon.domain.UserRepository
 class DefaultUserRepository (
     private val remoteUserDataSource: KtorRemoteUserDataSource
 ): UserRepository {
+
     override suspend fun getUsers(): Result<List<User>, DataError.Remote> {
         return remoteUserDataSource.getUser().map { dto -> dto.map { it.toUser() } }
     }

@@ -2,6 +2,7 @@ package com.ramiro.castrejon.data.user.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.plcoding.bookpedia.core.domain.onError
 import com.plcoding.bookpedia.core.domain.onSuccess
 import com.ramiro.castrejon.data.dto.UserDto
@@ -19,6 +20,8 @@ class UserListViewModel(
 ) : ViewModel(){
 
     private val _users= MutableStateFlow(UserListState())
+    private val _selectedUser = MutableStateFlow(User())
+    var selectedUser = _selectedUser
    val users = _users.onStart {
         getUsers()
     }.stateIn(
@@ -26,6 +29,10 @@ class UserListViewModel(
         SharingStarted.WhileSubscribed(5000L),
         _users.value
     )
+
+    fun selectUser(user: User){
+        _selectedUser.value = user
+    }
 
     fun getUsers(){
         viewModelScope.launch  {
