@@ -5,12 +5,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
+
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
-//import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,8 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
-import androidx.compose.ui.layout.VerticalAlignmentLine
+
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,7 +43,7 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.ramiro.castrejon.app.Route
 import com.ramiro.castrejon.core.presentation.PulseAnimation
-import com.ramiro.castrejon.data.dto.UserDto
+
 import com.ramiro.castrejon.domain.User
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,43 +54,37 @@ import virginmoneyapp.composeapp.generated.resources.compose_multiplatform
 fun UserListScreenRoot(
     viewModel: UserListViewModel = koinViewModel(),
     navController: NavController
-){
+) {
 
     val state by viewModel.users.collectAsStateWithLifecycle()
-    val user by viewModel.selectedUser.collectAsStateWithLifecycle()
+
     UserListScreen(state = state, navController = navController, viewModel = viewModel)
 
 }
 
 @Composable
 fun UserListScreen(
-    state: UserListState, navController: NavController, viewModel: UserListViewModel){
-    var detailUser by remember { mutableStateOf<User?>(null) }
+    state: UserListState, navController: NavController, viewModel: UserListViewModel
+) {
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Blue)
+            .background(Color.Black)
             .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+    ) {
+        LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
             items(state.searchResults) { results ->
-                Row(modifier = Modifier.fillMaxWidth()) { //Text(text = results.email)
-                UserCard(results.firstName,results.lastName,results.avatar, onClick = {
-                     viewModel.selectedUser.value= results
+
+                UserCard(results.firstName, results.lastName, results.avatar, onClick = {
+                    viewModel.selectedUser.value = results
                     navController.navigate(Route.UserDetail)
                 })
-                }
 
 
             }
         }
-//        detailUser?.let {user ->
-//            Box(modifier = Modifier.fillMaxSize()) {
-//                DetailUserCard(user.firstName, user.lastName, user.avatar, user.jobtitle, "Yellow",
-//                    onClick = { detailUser = null })
-//            }
-//        }
+
     }
 }
 
@@ -103,7 +95,7 @@ fun UserCard(
     avatar: String,
     onClick: () -> Unit
 
-){
+) {
     var imageLoadResult by remember {
         mutableStateOf<Result<Painter>?>(null)
     }
@@ -122,13 +114,20 @@ fun UserCard(
             imageLoadResult = Result.failure(it.result.throwable)
         }
     )
-    Card(modifier = Modifier.fillMaxWidth().padding(16.dp).clickable{onClick()},
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(16.dp).clickable { onClick() },
         shape = RoundedCornerShape(8.dp)
     ) {
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             val painterState by painter.state.collectAsStateWithLifecycle()
             val transition by animateFloatAsState(
-                targetValue = if(painterState is AsyncImagePainter.State.Success) {
+                targetValue = if (painterState is AsyncImagePainter.State.Success) {
                     1f
                 } else {
                     0f
@@ -140,6 +139,7 @@ fun UserCard(
                 null -> PulseAnimation(
                     modifier = Modifier.size(60.dp)
                 )
+
                 else -> {
                     Image(
                         painter = if (result.isSuccess) painter else {
@@ -151,9 +151,9 @@ fun UserCard(
                         } else {
                             ContentScale.Fit
                         },
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(150.dp)
                             .aspectRatio(
-                                ratio = 0.65f,
+                                ratio = 0.85f,
                                 matchHeightConstraintsFirst = true
                             )
                             .graphicsLayer {
@@ -166,8 +166,8 @@ fun UserCard(
                 }
             }
             Column {
-                Text(text = firstName, style = MaterialTheme.typography.body1)
-                Text(text = lastName, style = MaterialTheme.typography.body1)
+                Text(text = firstName, style = MaterialTheme.typography.h6)
+                Text(text = lastName, style = MaterialTheme.typography.h6)
             }
         }
     }
@@ -176,13 +176,13 @@ fun UserCard(
 @Composable
 fun DetailUserCard(
     user: User, onBackClick: () -> Unit
-){
-    println("${user.firstName} ${user.lastName} ${user.jobtitle}")
-    Column(modifier = Modifier.fillMaxSize().fillMaxWidth()
-        .background(Color.Black.copy(alpha = 0.5f)).clickable { onBackClick() },
-        verticalArrangement = Arrangement.SpaceBetween
+) {
 
-    ){
+    Column(
+        modifier = Modifier.padding(16.dp).clickable { onBackClick() },
+
+
+        ) {
         var imageLoadResult by remember {
             mutableStateOf<Result<Painter>?>(null)
         }
@@ -201,63 +201,71 @@ fun DetailUserCard(
                 imageLoadResult = Result.failure(it.result.throwable)
             }
         )
-        Card(modifier = Modifier.fillMaxSize().fillMaxWidth().clickable{onBackClick()},
-            shape = RoundedCornerShape(8.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column {
-                val painterState by painter.state.collectAsStateWithLifecycle()
-                val transition by animateFloatAsState(
-                    targetValue = if(painterState is AsyncImagePainter.State.Success) {
-                        1f
-                    } else {
-                        0f
-                    },
-                    animationSpec = tween(durationMillis = 800)
+
+
+            val painterState by painter.state.collectAsStateWithLifecycle()
+            val transition by animateFloatAsState(
+                targetValue = if (painterState is AsyncImagePainter.State.Success) {
+                    1f
+                } else {
+                    0f
+                },
+                animationSpec = tween(durationMillis = 800)
+            )
+
+            when (val result = imageLoadResult) {
+                null -> PulseAnimation(
+                    modifier = Modifier.size(60.dp)
                 )
 
-                when (val result = imageLoadResult) {
-                    null -> PulseAnimation(
-                        modifier = Modifier.size(60.dp)
+                else -> {
+                    Image(
+                        painter = if (result.isSuccess) painter else {
+                            painterResource(Res.drawable.compose_multiplatform)
+                        },
+                        contentDescription = "$user.firstName $user.lastName",
+                        contentScale = if (result.isSuccess) {
+                            ContentScale.Crop
+                        } else {
+                            ContentScale.Fit
+                        },
+                        modifier = Modifier.size(350.dp).padding(20.dp)
+                            .aspectRatio(
+                                ratio = 0.85f,
+                                matchHeightConstraintsFirst = true
+                            )
+                            .graphicsLayer {
+                                rotationX = (1f - transition) * 30f
+                                val scale = 0.8f + (0.2f * transition)
+                                scaleX = scale
+                                scaleY = scale
+                            }
                     )
-                    else -> {
-                        Image(
-                            painter = if (result.isSuccess) painter else {
-                                painterResource(Res.drawable.compose_multiplatform)
-                            },
-                            contentDescription = "$user.firstName $user.lastName",
-                            contentScale = if (result.isSuccess) {
-                                ContentScale.Crop
-                            } else {
-                                ContentScale.Fit
-                            },
-                            modifier = Modifier.fillMaxWidth().padding(20.dp)
-                                .aspectRatio(
-                                    ratio = 0.65f,
-                                    matchHeightConstraintsFirst = true
-                                )
-                                .graphicsLayer {
-                                    rotationX = (1f - transition) * 30f
-                                    val scale = 0.8f + (0.2f * transition)
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                        )
-                    }
-                }
-                Column (modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
-                    Row(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
-                        Text(text = "First Name: ${user.firstName}", style = MaterialTheme.typography.body1, textAlign = TextAlign.Center)
-                    }
-                    Row (){
-                        Text(text = "Last Name: ${user.lastName}", style = MaterialTheme.typography.body1, textAlign = TextAlign.Center)
-                    }
-                    Row (){
-                        Text(text = "Title: ${user.jobtitle}", style = MaterialTheme.typography.body1, textAlign = TextAlign.Center)
-                    }
-
-
                 }
             }
+
+            Text(
+                text = "First Name: ${user.firstName}",
+                style = MaterialTheme.typography.h5,
+                textAlign = TextAlign.Left
+            )
+
+            Text(
+                text = "Last Name: ${user.lastName}",
+                style = MaterialTheme.typography.h5,
+                textAlign = TextAlign.Left
+            )
+
+            Text(
+                text = "Title: ${user.jobtitle}",
+                style = MaterialTheme.typography.h5,
+                textAlign = TextAlign.Left
+            )
+
         }
     }
 
