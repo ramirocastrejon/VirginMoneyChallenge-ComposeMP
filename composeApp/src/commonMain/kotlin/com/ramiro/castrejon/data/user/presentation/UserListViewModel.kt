@@ -2,10 +2,8 @@ package com.ramiro.castrejon.data.user.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.plcoding.bookpedia.core.domain.onError
 import com.plcoding.bookpedia.core.domain.onSuccess
-import com.ramiro.castrejon.data.dto.UserDto
 import com.ramiro.castrejon.domain.User
 import com.ramiro.castrejon.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow

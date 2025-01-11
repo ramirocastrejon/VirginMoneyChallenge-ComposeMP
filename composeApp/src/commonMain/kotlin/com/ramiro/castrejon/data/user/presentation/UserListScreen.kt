@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -73,6 +74,9 @@ fun UserListScreen(
             .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Button(onClick = {navController.navigate(Route.RoomList)}){
+            Text(text = "Rooms")
+        }
         LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
             items(state.searchResults) { results ->
 
