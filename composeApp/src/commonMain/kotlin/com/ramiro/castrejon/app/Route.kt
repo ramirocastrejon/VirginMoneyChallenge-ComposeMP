@@ -12,4 +12,6 @@ sealed interface Route {
     data object AppGraph: Route
     @Serializable
     data object UserDetail:Route
+    @Serializable
+    data object RoomList:Route
 }

@@ -18,6 +18,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.ramiro.castrejon.app.Route
+import com.ramiro.castrejon.data.room.presentation.RoomListScreenRoot
+import com.ramiro.castrejon.data.room.presentation.RoomListViewModel
 import com.ramiro.castrejon.data.user.presentation.DetailUserCard
 import com.ramiro.castrejon.data.user.presentation.UserListScreenRoot
 import com.ramiro.castrejon.data.user.presentation.UserListViewModel
@@ -35,6 +37,7 @@ fun App() {
         val navController = rememberNavController()
         var showContent by remember { mutableStateOf(false) }
         val viewModel = koinViewModel<UserListViewModel>()
+        val roomViewModel = koinViewModel<RoomListViewModel>()
 
         NavHost(
             navController = navController,
@@ -70,6 +73,18 @@ fun App() {
                             navController.navigateUp()
                         }
                     )
+                }
+                composable<Route.RoomList>(
+                    enterTransition = { slideInHorizontally { initialOffset ->
+                        initialOffset
+                    } },
+                    exitTransition = { slideOutHorizontally { initialOffset ->
+                        initialOffset
+                    } }
+                ) {
+                    val roomList = roomViewModel.rooms.value
+                    println(roomList)
+                    RoomListScreenRoot(roomViewModel,navController)
                 }
 
             }
